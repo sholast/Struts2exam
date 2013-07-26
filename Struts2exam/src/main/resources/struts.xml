@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<constant name="struts.devMode" value="false" />
+
+	<package name="default" namespace="/" extends="struts-default">
+
+		<action name="removeCustomer" class="org.alexeykozel.action.UserAction"
+			method="removeCustomer">
+			<result name="success">pages/user.jsp</result>
+			<result name="error">pages/user.jsp</result>
+  			<result name="input">pages/user.jsp</result>
+		</action>
+
+		<action name="addCustomer" class="org.alexeykozel.action.AddAction"
+			method="addCustomer">
+			<result name="success">pages/user.jsp</result>
+			<result name="error">pages/add.jsp</result>
+  			<result name="input">pages/add.jsp</result>
+		</action>
+
+
+		<action name="toAddForm" class="org.alexeykozel.action.UserAction"
+			method="toAddForm">
+			<result name="success">pages/add.jsp</result>
+			<result name="error">pages/user.jsp</result>
+  			<result name="input">pages/user.jsp</result>
+		</action>
+
+		<action name="listUser" class="org.alexeykozel.action.UserAction"
+			method="listUser">
+			<result name="success">pages/user.jsp</result>
+			<result name="error">pages/user.jsp</result>
+  			<result name="input">pages/user.jsp</result>
+		</action>
+
+
+	</package>
+</struts>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Struts2exam" default="all" basedir=".">
+
+	<property file="build.properties" />
+	<property name="build.finalName" value="Struts2exam" />
+	<property name="build.dir" value="target" />
+	<property name="build.classesDir" value="${build.dir}/classes" />
+	<property name="build.srcDir" value="src/main/java" />
+	<property name="build.resourceDir" value="src/main/resources" />
+
+	<path id="libs.dir">
+		<fileset dir="${basedir}/lib" includes="**/*.jar" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="init" depends="clean">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classesDir}" />
+	</target>
+
+	<target name="compile" depends="init" description="Compile the code">
+		<mkdir dir="${build.classesDir}" />
+		<javac destdir="${build.classesDir}" nowarn="false" debug="true"
+			optimize="false" deprecation="true" target="1.6" verbose="false"
+			fork="false" source="1.6">
+			<src>
+				<pathelement location="${build.srcDir}" />
+			</src>
+			<classpath refid="libs.dir" />
+		</javac>
+		<copy todir="${build.classesDir}">
+			<fileset dir="${build.resourceDir}" />
+		</copy>
+	</target>
+
+	<target name="package" depends="compile" description="Package the application">
+
+		<copydir src="${basedir}/lib" dest="${build.dir}/${build.finalName}/WEB-INF/lib"
+			excludes="*jsp*,*servlet-api*" />
+
+		<war destfile="${build.dir}/${build.finalName}.war" compress="true"
+			webxml="src/main/webapp/WEB-INF/web.xml">
+			<lib dir="${build.dir}/${build.finalName}/WEB-INF/lib" />
+			<classes dir="${build.classesDir}" />
+			<fileset dir="src/main/webapp" excludes="WEB-INF/web.xml" />
+		</war>
+	</target>
+
+	<target name="deploy" depends="package" description="Deploy application as a WAR file">
+		<copy file="${build.dir}/${build.finalName}.war" todir="${deploy.path}" />
+	</target>
+
+	<target name="all" depends="reload">
+		<echo message="Build complete." />
+	</target>
+
+	<path id="catalina-ant-classpath">
+		<!-- We need the Catalina jars for Tomcat -->
+		<fileset dir="${appserver.lib}">
+			<include name="catalina-ant.jar" />
+		</fileset>
+	</path>
+
+	<taskdef name="install" classname="org.apache.catalina.ant.InstallTask">
+		<classpath refid="catalina-ant-classpath" />
+	</taskdef>
+	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
+		<classpath refid="catalina-ant-classpath" />
+	</taskdef>
+	<taskdef name="list" classname="org.apache.catalina.ant.ListTask">
+		<classpath refid="catalina-ant-classpath" />
+	</taskdef>
+	<taskdef name="start" classname="org.apache.catalina.ant.StartTask">
+		<classpath refid="catalina-ant-classpath" />
+	</taskdef>
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask">
+		<classpath refid="catalina-ant-classpath" />
+	</taskdef>
+
+	<target name="reload" description="Reload application in Tomcat" depends="deploy">
+		<reload url="${tomcat.manager.url}" username="${tomcat.manager.username}"
+			password="${tomcat.manager.password}" path="/${build.finalName}" />
+	</target>
+</project>
